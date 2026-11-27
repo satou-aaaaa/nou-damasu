@@ -19,7 +19,7 @@ const check = (name, ok, detail = "") => results.push({ name, ok: !!ok, detail: 
 const firstClose = async (q) => { if (await q.locator("#howto[open]").count()) await q.click("#howto-ok"); if (await q.evaluate(() => !!(window.Core && Core.coach && Core.coach.active()))) { await q.evaluate(() => { Core.coach.leave(); scrollTo(0, 0); }); await q.waitForTimeout(100); } }; // はじめての練習の吹き出しをやめてホームへ（sync-template の migrateFirstQa が足した）
 const G = createRequire(import.meta.url)(path.join(root, "data.js"));
 
-const PIN = "ml0:150,20,1,5"; // 第1回の1問目（変わったら過去の日の問題が変わった印）
+const PIN = "ml0:150,20,1,4"; // 第1回の1問目（変わったら過去の日の問題が変わった印）
 // ---- 1. 問題の作り方（ブラウザを使わない）----
 // 答えは data.js の ans を信じず、描いた SVG の data-t の形（線の長さ・円の半径・灰色・曲がり・線の続き）から測り直す（ゲームとは別に書いた計算）
 const num = (t, a) => +((t.match(new RegExp(`\\b${a}="(-?[\\d.]+)"`)) || [])[1]);
@@ -31,17 +31,21 @@ function measure(P) {
   if (id === "ebb") return pick(num(t[1], "r"), num(t[2], "r"), "左", "右");
   if (id === "br" || id === "adel") { const g = (x) => parseInt((x.match(/fill="#([0-9a-f]{2})\1\1"/) || [])[1], 16); return pick(g(t[1]), g(t[2]), "A", "B"); }
   if (id === "her") { const b = (x) => { const m = x.match(/d="M(\d+) 12 Q(-?[\d.]+) 100 \1 188"/); return m ? (+m[2] - +m[1]) / 2 : NaN; }, l = -b(t[1]), r = b(t[2]); if (l !== r) return "左右でちがう"; return l === 0 ? "まっすぐ" : l > 0 ? "外へふくらむ" : "内へへこむ"; }
-  if (id === "pogg") { const x1 = num(t[0], "x1"), y1 = num(t[0], "y1"), x2 = num(t[0], "x2"), y2 = num(t[0], "y2"), k = (y2 - y1) / (x2 - x1); const hit = [1, 2, 3].filter((i) => { const sx = num(t[i], "x1"), sy = num(t[i], "y1"), k2 = (num(t[i], "y2") - sy) / (num(t[i], "x2") - sx); return Math.abs(y1 + k * (sx - x1) - sy) <= 1 && Math.abs(k2 - k) < 0.02; }); return hit.length === 1 ? "ABC"[hit[0] - 1] : "続きが1本でない"; }
+  if (id === "pogg") { const x1 = num(t[0], "x1"), y1 = num(t[0], "y1"), x2 = num(t[0], "x2"), y2 = num(t[0], "y2"), k = (y2 - y1) / (x2 - x1); const hit = [1, 2, 3].filter((i) => { const sx = num(t[i], "x1"), sy = num(t[i], "y1"), k2 = (num(t[i], "y2") - sy) / (num(t[i], "x2") - sx); return Math.abs(y1 + k * (sx - x1) - sy) < 1e-9 && Math.abs(k2 - k) < 1e-9; }); return hit.length === 1 ? "ABC"[hit[0] - 1] : "続きが1本でない"; } // 続きは丸めずに同じ直線の上（ずれを許さない。PR #1 の CodeRabbit）
   if (id === "cafe") { const ys = [1, 2, 3, 4, 5, 6].map((i) => num(t[i], "y")), hs = [1, 2, 3, 4, 5, 6].map((i) => num(t[i], "height")); return ys.every((y, i) => !i || y - ys[i - 1] === 30) && new Set(hs).size === 1 && /width="320"/.test(t[1]) ? "平行" : "平行でない"; }
   return "種類が分からない";
 }
 // 2段目の答えの表（出典で確かめたものだけ。data.js とは別に書く）。変える → 答え
 const M2 = {
-  "矢羽どうしの角度を、もっとせまくする（30°）": "up", "矢羽どうしの角度を、広くする（120°）": "down", "この図で、長さを合わせる練習を何度もくり返す": "down", // Dewar 1967
-  "定規で測って、本当の長さを知ってから見る": "same", // SEP The Problem of Perception §3.3.2
-  "目地（タイルの間の灰色の線）を、もっと細くする": "up", "目地を、ずっと太くする": "down", "目地を、白いタイルより明るくする": "down", "白と黒のタイルを、どちらも1つの灰色にする": "down", // Gregory & Heard 1979
-  "矢羽を消して、線だけにする": "down", "まわりの円を全部消す": "down", "左右の地を、1つの色にそろえる": "down", "斜めの2本の線を消す": "down", "まん中から広がる線を消す": "down", "間の帯を消して、線を見せる": "down", "まわりのマスと影を紙でかくし、A と B だけを見る": "down", // 錯覚を起こすまわりを消す
-  "上の図と下の図を入れかえる": "same", "左と右の図を入れかえる": "same", "図を左右反対（鏡うつし）にする": "same", "図を上下さかさまにする": "same", // 図が同じ形のまま
+  // SRC.dewar（Dewar 1967：角度が小さいほど大きい・くり返しで小さくなる）
+  "矢羽どうしの角度を、もっとせまくする（30°）": "up", "矢羽どうしの角度を、広くする（120°）": "down", "この図で、長さを合わせる練習を何度もくり返す": "down",
+  // SRC.cafe（Gregory & Heard 1979：細い目地ほど強い・太いと弱い・目地が明暗の間にあるときだけ・タイルが同じ明るさなら出ない）
+  "目地（タイルの間の灰色の線）を、もっと細くする": "up", "目地を、ずっと太くする": "down", "目地を、白いタイルより明るくする": "down", "白と黒のタイルを、どちらも1つの灰色にする": "down",
+  // 錯覚を起こす「まわり」を消す（各錯視の定義）：SRC.mlx・SRC.ebb・SRC.olman・SRC.ponzo・SRC.hering・SRC.pogg・SRC.adelx の順
+  "矢羽を消して、線だけにする": "down", "まわりの円を全部消す": "down", "左右の地を、1つの色にそろえる": "down", "斜めの2本の線を消す": "down", "まん中から広がる線を消す": "down", "間の帯を消して、線を見せる": "down", "まわりのマスと影を紙でかくし、A と B だけを見る": "down",
+  // 図がもとと同じ形のまま（上下・左右の入れかえ・鏡うつし・さかさま）：SRC.mlx・SRC.ebb・SRC.olman・SRC.ponzo・SRC.hering・SRC.cafex
+  "上の図と下の図を入れかえる": "same", "左と右の図を入れかえる": "same", "図を左右反対（鏡うつし）にする": "same", "図を上下さかさまにする": "same",
+  // 「定規で測って本当の長さを知ってから見る」は入れない：SEP §3.3.2 は「知っていても錯覚が残る」までで、強さが同じとは言っていない（PR #1 の CodeRabbit）
 };
 const OPTS = { ml: "上,下,同じ", ponzo: "上,下,同じ", ebb: "左,右,同じ", br: "A,B,同じ", adel: "A,B,同じ", her: "まっすぐ,外へふくらむ,内へへこむ", pogg: "A,B,C", cafe: "平行,右へひらく,右へせばまる" };
 const URLRE = /^https:\/\/(vlp-new\.ur\.de\/records\/lit5535|www\.illusionsindex\.org\/i\/(mueller-lyer|ebbinghaus-illusion|ponzo-illusion|hering-illusion|poggendorff-illusion|cafe-wall-illusion)|illusionsindex\.org\/ir\/20-checkershadow|www\.appstate\.edu\/~steelekm\/classes\/psy4215\/Documents\/Dewar1967-muller-lyer\.pdf|plato\.stanford\.edu\/entries\/perception-problem\/|richardgregory\.org\/papers\/cafe_wall\/cafe-wall_all\.htm|open\.lib\.umn\.edu\/sensationandperception\/chapter\/simultaneous-contrast\/)$/;
@@ -149,6 +153,10 @@ const url = `http://127.0.0.1:${server.address().port}/`;
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const errors = [];
 const TODAY = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+// ブラウザの時計を TODAY の正午（日本時間）に合わせる（検査の途中で0時をまたいでも、画面の「今日」と期待値がずれない。PR #1 の CodeRabbit）
+// 足すだけの形なので、あとから時計を進める addInitScript（カレンダーの検査）とも重ねられる
+const CLOCK = Date.parse(TODAY + "T03:00:00Z") - Date.now(), newCtx0 = browser.newContext.bind(browser);
+browser.newContext = async (...a) => { const c = await newCtx0(...a); await c.addInitScript((d) => { const o = Date.now; Date.now = () => o() + d; }, CLOCK); return c; };
 const dayBefore = (n) => new Date(Date.parse(TODAY) - n * 864e5).toISOString().slice(0, 10);
 async function newPage(w = 390, ctx) {
   const c = ctx || await browser.newContext({ viewport: { width: w, height: 800 } });
@@ -198,6 +206,7 @@ try {
   await firstClose(p);
   check("文字の大きさ：はじめは「大きい」（19px）", await p.evaluate(() => getComputedStyle(document.documentElement).fontSize) === "19px");
   await p.click('.fsrow button[data-fs="3"]');
+  check("文字の大きさを押しても、押したボタンにフォーカスが残る（描き直さない。PR #1 の CodeRabbit）", await p.evaluate(() => document.activeElement && document.activeElement.dataset.fs === "3" && document.activeElement.getAttribute("aria-pressed") === "true"));
   await p.reload(); await p.waitForTimeout(150);
   check("文字の大きさ：「とても大きい」にすると開き直しても残る", await p.evaluate(() => getComputedStyle(document.documentElement).fontSize) === "23px" && await p.locator('.fsrow button[data-fs="3"][aria-pressed="true"]').count() === 1);
   await p.click('.fsrow button[data-fs="2"]');
@@ -290,7 +299,8 @@ try {
     await q.evaluate(() => { const s = JSON.parse(localStorage.getItem("ndm-v1")) || { v: 1 }; s.ebest = '<img id="xss" src=x>'; s.dex = { e: '"><b id="xss2">' }; s.runs = { e: { mode: "e", id: '"><i id="xss3">', date: "2026-11-07", list: ["ml0|1"], res: [] }, h: { list: "bad", res: [] }, p: { mode: "p", id: "y", date: "2026-11-07", list: ["constructor|1"], res: [] }, d: { mode: "d", id: "z", date: "x", list: ["ml0|1"], res: [] }, "a:2026-11-06": { mode: "a", id: "a1", date: "2026-11-06", list: ["ml0|1"], res: [null] }, "a:2026-11-05": { mode: "a", id: "a2", date: "2026-11-05", list: "bad", res: [] }, "a:2026-11-04": { mode: "a", id: "a3", date: "2026-11-04", list: ["ml0|1", "ml0|2"], res: [{ m: 0 }], cur: { i: 1, tag: "ml0|2", wrong: "x", hints: 0 } } }; s.days = { "2026-11-07": { m: "x" }, bad: { m: [0] }, "2026-02-30": { m: [0] } }; localStorage.setItem("ndm-v1", JSON.stringify(s)); });
     await q.reload(); await q.waitForTimeout(250);
     const st = await q.evaluate(() => __nm.load());
-    check("記録の形を直す：数の所の文字は0に・形のちがう途中経過と日ごとの記録は捨てる", st.ebest === 0 && st.dex.e === 0 && st.runs.e && !("h" in st.runs) && !("p" in st.runs) && !("d" in st.runs) && !("a:2026-11-06" in st.runs) && !("a:2026-11-05" in st.runs) && st.runs["a:2026-11-04"] && st.runs["a:2026-11-04"].cur === null && Object.keys(st.days).length === 0);
+      check("結果に null が混ざった終えた回は、記録しないで止まらない（PR #1 の CodeRabbit）", await q.evaluate(() => { const s = __nm.load(); try { return __nm.bank(s, { mode: "d", date: "2026-11-20", list: ["ml0|1"], res: [null] }) === false && !s.days["2026-11-20"]; } catch (e) { return String(e); } }) === true);
+  check("記録の形を直す：数の所の文字は0に・形のちがう途中経過と日ごとの記録は捨てる", st.ebest === 0 && st.dex.e === 0 && st.runs.e && !("h" in st.runs) && !("p" in st.runs) && !("d" in st.runs) && !("a:2026-11-06" in st.runs) && !("a:2026-11-05" in st.runs) && st.runs["a:2026-11-04"] && st.runs["a:2026-11-04"].cur === null && Object.keys(st.days).length === 0);
     await q.click("#go-e").catch(() => {}); await q.waitForTimeout(150);
     {
       // 知らない mode や、置き場とちがう mode の途中経過は捨てる（ホームが出なくなるのを防ぐ。2026-11-07 CodeRabbit）
@@ -494,7 +504,7 @@ try {
     const bad = [], small = [];
     for (const [w, fs] of [[320, 3], [390, 2], [320, 1]]) {
       const q = await newPage(w); await closeHow(q);
-      await q.evaluate((fs) => localStorage.setItem("ndm-fs", String(fs)), fs); await q.reload(); await q.waitForTimeout(150);
+      await q.evaluate((fs) => (localStorage.setItem("ndm-fs", String(fs)), localStorage.setItem("a11y-v1", JSON.stringify({ ...JSON.parse(localStorage.getItem("a11y-v1") || "{}"), fs: undefined }))), fs); await q.reload(); await q.waitForTimeout(150);
       for (const go of [null, "#go-d", "solve", "#go-cal", "#go-dex", "#go-ach", "#go-e"]) {
         if (go === "solve") { await solve(q); }
         else if (go) { await q.goto(url); await q.waitForTimeout(100); await q.click(go); }
