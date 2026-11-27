@@ -24,8 +24,7 @@
     pogg: ["The Illusions Index「Poggendorff Illusion」（1860）", "https://www.illusionsindex.org/i/poggendorff-illusion"],
     cafe: ["Gregory & Heard 1979「Border locking and the Café Wall illusion」Perception 8: 365–380", "https://richardgregory.org/papers/cafe_wall/cafe-wall_all.htm"],
     cafex: ["The Illusions Index「Café Wall Illusion」", "https://www.illusionsindex.org/i/cafe-wall-illusion"],
-    adel: ["Adelson「Checkershadow Illusion」（MIT、1995）", "https://persci.mit.edu/gallery/checkershadow"],
-    adelx: ["The Illusions Index「Adelson's Checker-Shadow Illusion」", "https://illusionsindex.org/ir/20-checkershadow"],
+    adelx: ["The Illusions Index「Adelson's Checker-Shadow Illusion」（Adelson の MIT のページ ©1995 を引く）", "https://illusionsindex.org/ir/20-checkershadow"],
     olman: ["Olman 編『Introduction to Sensation and Perception』10.4 Simultaneous Contrast（ミネソタ大学）", "https://open.lib.umn.edu/sensationandperception/chapter/simultaneous-contrast/"],
   };
 
@@ -282,7 +281,7 @@
     K("her1", 1, ["hering"], "ヘリング", "広がる線は見ないで、縦の線のはしとまん中を見よう。", "まん中から広がる線の上では、まっすぐな線が外へふくらんで見えやすい。", "まん中から広がる線の上では、まっすぐな線が曲がって見えます。Hering が1861年に発表しました。", heringMake([0, 0, 6, -6])),
     K("pogg1", 1, ["pogg"], "ポッゲンドルフ", "帯は見ないで、線の向きだけをたどろう。", "定規を線に当てるつもりで、まっすぐのばそう。", "帯の後ろを通る斜めの線は、続きがずれて見えます。1860年に Poggendorff の雑誌に載りました。", poggMake([14, 16])),
     K("cafe1", 1, ["cafe", "cafex"], "カフェウォール", "タイルは見ないで、灰色の線のはしとはしを見よう。", "画面の左右のはしで、線と線の間をくらべよう。", "白黒のタイルが1段ごとにずれると、平行な目地がくさびのように傾いて見えます。Gregory が喫茶店の壁で気づき、Heard と1979年に調べました。", cafeMake()),
-    K("adel2", 2, ["adel", "adelx"], "チェッカーの影", "まわりのマスと影は見ないで、A と B の灰色だけを見よう。", "影の中のマスは、目が「本当は明るい」と読みかえる。", "影の中の明るいマスと、影の外の暗いマスが、同じ灰色になることがあります。Adelson が1995年に作りました。", adelMake([0, 0, 0, 12, -12])),
+    K("adel2", 2, ["adelx"], "チェッカーの影", "まわりのマスと影は見ないで、A と B の灰色だけを見よう。", "影の中のマスは、目が「本当は明るい」と読みかえる。", "影の中の明るいマスと、影の外の暗いマスが、同じ灰色になることがあります。Adelson が1995年に作りました。", adelMake([0, 0, 0, 12, -12])),
     K("ml2", 2, ["ml", "mlx", "dewar"], "ミュラー・リヤー（むずかしい）", "矢羽は見ないで、線の両はしだけを見よう。", "見た感じと反対のこともある。はしをたてにそろえて見よう。", "錯覚は、本当の少しの差をかくすこともあります。矢羽の向きが、見た感じを本当と反対にすることもあります。", mlMake([0, 6, -6])),
     K("ebb2", 2, ["ebb"], "エビングハウスの円（むずかしい）", "まわりの円は見ないで、まん中の円だけを見よう。", "見た感じと反対のこともある。円のはばを指でくらべよう。", "まわりの円は、本当の少しの差をかくしたり、反対に見せたりします。", ebbMake([0, 8, -8])),
     K("br2", 2, ["olman"], "明るさの対比（むずかしい）", "地の色は見ないで、四角だけを見よう。", "見た感じと反対のこともある。", "地の明るさは、本当の少しの差をかくしたり、反対に見せたりします。", brMake([0, 10, -10])),

@@ -10,7 +10,7 @@
   - Franz C. Müller-Lyer, 1889, "Optische Urtheilstäuschungen", Archiv für Physiologie, Suppl. 263–270（書誌 <https://vlp-new.ur.de/records/lit5535>）
   - R. E. Dewar, 1967, "Stimulus determinants of the magnitude of the Mueller-Lyer illusion", Perceptual and Motor Skills 24: 708–710（<https://www.appstate.edu/~steelekm/classes/psy4215/Documents/Dewar1967-muller-lyer.pdf>）
   - R. L. Gregory and P. Heard, 1979, "Border locking and the Café Wall illusion", Perception 8: 365–380（<https://richardgregory.org/papers/cafe_wall/cafe-wall_all.htm>）
-  - Edward H. Adelson, "Checkershadow Illusion", MIT, 1995（<https://persci.mit.edu/gallery/checkershadow>）
+  - Edward H. Adelson, "Checkershadow Illusion", MIT Perceptual Science Group のページ, ©1995（The Illusions Index のページから。MIT のページは証明書の期限切れで Link check が通らないため、直接のリンクは置かない）
   - The Illusions Index（グラスゴー大学）：Müller-Lyer・Ebbinghaus・Ponzo・Hering・Poggendorff・Café Wall・Checker-Shadow の各ページ（<https://www.illusionsindex.org/>）
   - Tim Crane and Craig French, "The Problem of Perception", Stanford Encyclopedia of Philosophy §3.3.2（<https://plato.stanford.edu/entries/perception-problem/>）
   - Cheryl Olman (ed.), Introduction to Sensation and Perception, 10.4 Simultaneous Contrast（<https://open.lib.umn.edu/sensationandperception/chapter/simultaneous-contrast/>）

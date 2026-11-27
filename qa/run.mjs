@@ -44,7 +44,7 @@ const M2 = {
   "上の図と下の図を入れかえる": "same", "左と右の図を入れかえる": "same", "図を左右反対（鏡うつし）にする": "same", "図を上下さかさまにする": "same", // 図が同じ形のまま
 };
 const OPTS = { ml: "上,下,同じ", ponzo: "上,下,同じ", ebb: "左,右,同じ", br: "A,B,同じ", adel: "A,B,同じ", her: "まっすぐ,外へふくらむ,内へへこむ", pogg: "A,B,C", cafe: "平行,右へひらく,右へせばまる" };
-const URLRE = /^https:\/\/(vlp-new\.ur\.de\/records\/lit5535|www\.illusionsindex\.org\/i\/(mueller-lyer|ebbinghaus-illusion|ponzo-illusion|hering-illusion|poggendorff-illusion|cafe-wall-illusion)|illusionsindex\.org\/ir\/20-checkershadow|www\.appstate\.edu\/~steelekm\/classes\/psy4215\/Documents\/Dewar1967-muller-lyer\.pdf|plato\.stanford\.edu\/entries\/perception-problem\/|richardgregory\.org\/papers\/cafe_wall\/cafe-wall_all\.htm|persci\.mit\.edu\/gallery\/checkershadow|open\.lib\.umn\.edu\/sensationandperception\/chapter\/simultaneous-contrast\/)$/;
+const URLRE = /^https:\/\/(vlp-new\.ur\.de\/records\/lit5535|www\.illusionsindex\.org\/i\/(mueller-lyer|ebbinghaus-illusion|ponzo-illusion|hering-illusion|poggendorff-illusion|cafe-wall-illusion)|illusionsindex\.org\/ir\/20-checkershadow|www\.appstate\.edu\/~steelekm\/classes\/psy4215\/Documents\/Dewar1967-muller-lyer\.pdf|plato\.stanford\.edu\/entries\/perception-problem\/|richardgregory\.org\/papers\/cafe_wall\/cafe-wall_all\.htm|open\.lib\.umn\.edu\/sensationandperception\/chapter\/simultaneous-contrast\/)$/;
 {
   const bad = {}, seen = {}, N = 3000, ansSeen = {};
   for (const k of G.KINDS) {
